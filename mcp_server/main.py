@@ -5,6 +5,9 @@ os.environ["PYLGTV_STORE"] = "/Users/ojaskulkarni/dev/mcp-server-project/lgtv-mc
 
 from fastmcp import FastMCP
 from tools.tv_controller.netflix_controller import play_netflix
+from typing import Annotated
+from pydantic import Field
+
 
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Explicit override BEFORE importing any pylgtv/webos modules
@@ -12,17 +15,14 @@ from tools.tv_controller.netflix_controller import play_netflix
 
 mcp = FastMCP(name="Media Assistant")
 
-@mcp.tool()
-async def play_netflix_show(show_name: str) -> str:
-    """
-    Starts playing a TV show or movie on netflix
-
-    Args:
-        show_name (str): The name of the show to play.
-
-    Returns:
-        str: Confirmation that the show has started.
-    """
+@mcp.tool(
+    name="play_netflix_show",
+    description="Play the given tv show or movie on Netflix",
+    tags={"netflix"},
+)
+async def play_netflix_show(
+    show_name: Annotated[str, Field(description="name of the show or movie to be played")]
+) -> str:
     await play_netflix(show_name)
     return f"Started playing '{show_name}' on Netflix."
 
